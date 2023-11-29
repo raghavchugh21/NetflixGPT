@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "nflix-red": "#e50914"
+      }
+    },
   },
   plugins: [],
 }
