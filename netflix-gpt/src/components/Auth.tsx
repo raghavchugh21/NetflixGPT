@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React from "react";
 
 function Auth() {
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = React.useState(true);
 
   return (
     <div className="flex h-screen w-screen justify-center items-center">

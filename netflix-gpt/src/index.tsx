@@ -6,11 +6,11 @@ import Auth from './components/Auth';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
     <Router>
       <Routes>
-        <Route path="/" exact element={<App/>} />
+        <Route path="/" element={<App/>} />
         <Route path="/login" element={<Auth/>} />
       </Routes>
     </Router>
