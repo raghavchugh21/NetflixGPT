@@ -10,12 +10,15 @@ type FormProps = {
   setFormType: Function;
 };
 
-function InputFields(props: React.PropsWithChildren<any>) {
+function InputArea(props: React.PropsWithChildren<any>) {
 
-  const { formType, register, errors } = props;
+  const { formType, formHookMethods } = props;
+  const {
+    register,
+    formState: { errors },
+  } = formHookMethods;
+
   const fields = AuthUtils.GetInputFields(formType);
-
-  console.log(errors);
 
   return (
     <>
@@ -39,7 +42,11 @@ function InputFields(props: React.PropsWithChildren<any>) {
 
 function AdditionalOptions(props: React.PropsWithChildren<any>) {
 
-  const { formType, setFormType, register, errors } = props;
+  const { formType, setFormType, formHookMethods } = props;
+  const {
+    register,
+    reset
+  } = formHookMethods;
 
   switch (formType) {
 
@@ -65,6 +72,7 @@ function AdditionalOptions(props: React.PropsWithChildren<any>) {
             <a
               onClick={() => {
                 setFormType(FORM_TYPE.SIGN_UP);
+                reset();
               }}
               className="text-white text-sm hover:cursor-pointer"
             >
@@ -81,6 +89,7 @@ function AdditionalOptions(props: React.PropsWithChildren<any>) {
           <a
             onClick={() => {
               setFormType(FORM_TYPE.SIGN_IN);
+              reset();
             }}
             className="text-white text-sm hover:cursor-pointer"
           >
@@ -99,21 +108,17 @@ function Form<T extends ZodTypeAny>(props: React.PropsWithChildren<FormProps>) {
 
   const schema: T = AuthUtils.GetSchema(formType) as T;
   type S = z.infer<typeof schema>;
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<S>({ resolver: zodResolver<T>(schema) });
+  
+  const formHookMethods = useForm<S>({ resolver: zodResolver<T>(schema) });
 
   return (
     <form
-      onSubmit={handleSubmit((data) => {
+      onSubmit={formHookMethods.handleSubmit((data) => {
         console.log(data);
       })}
       className="h-full w-full flex flex-col"
     >
-      <InputFields formType={formType} register={register} errors={errors} />
+      <InputArea formType={formType} formHookMethods={formHookMethods} />
       <button
         className="h-[50px] rounded-md bg-nflix-red text-white mb-3"
         type="submit"
@@ -123,8 +128,7 @@ function Form<T extends ZodTypeAny>(props: React.PropsWithChildren<FormProps>) {
       <AdditionalOptions
         formType={formType}
         setFormType={setFormType}
-        register={register}
-        errors={errors}
+        formHookMethods={formHookMethods}
       />
     </form>
   );
