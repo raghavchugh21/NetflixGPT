@@ -16,7 +16,6 @@ class AuthUtils {
               .string()
               .min(8, "Password must be at least 8 characters"),
             confirm_password: z.string(),
-            remember: z.boolean(),
           })
           .refine((data) => data.confirm_password === data.password, {
             message: "Passwords don't match",
@@ -27,6 +26,7 @@ class AuthUtils {
         return z.object({
           email: z.string().email("Invalid email address"),
           password: z.string().min(8, "Password must be at least 8 characters"),
+          remember: z.boolean(),
         });
     }
   }

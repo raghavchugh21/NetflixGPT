@@ -11,19 +11,18 @@ type FormProps = {
 };
 
 function InputArea(props: React.PropsWithChildren<any>) {
-
   const { formType, formHookMethods } = props;
   const {
     register,
     formState: { errors },
   } = formHookMethods;
-
+  console.log(errors);
   const fields = AuthUtils.GetInputFields(formType);
 
   return (
     <>
       {fields.map((id, i) => (
-        <label key={i} className="mb-5">
+        <label key={id} className="mb-5">
           <input
             className="h-[50px] w-full rounded-md bg-gray-300 pl-2"
             placeholder={id
@@ -31,9 +30,13 @@ function InputArea(props: React.PropsWithChildren<any>) {
               .map((word) => word[0].toUpperCase() + word.substring(1))
               .join(" ")}
             {...(id.includes("password") ? { type: "password" } : {})}
-            {...register(id, { required: true })}
+            {...register(id)}
           />
-          {<p className="text-white text-sm font-thin mt-3">{errors[id]?.message}</p>}
+          {
+            <p className="text-white text-sm font-thin mt-3">
+              {errors[id]?.message}
+            </p>
+          }
         </label>
       ))}
     </>
@@ -41,15 +44,10 @@ function InputArea(props: React.PropsWithChildren<any>) {
 }
 
 function AdditionalOptions(props: React.PropsWithChildren<any>) {
-
   const { formType, setFormType, formHookMethods } = props;
-  const {
-    register,
-    reset
-  } = formHookMethods;
+  const { register } = formHookMethods;
 
   switch (formType) {
-
     case FORM_TYPE.SIGN_IN:
       return (
         <>
@@ -72,7 +70,6 @@ function AdditionalOptions(props: React.PropsWithChildren<any>) {
             <a
               onClick={() => {
                 setFormType(FORM_TYPE.SIGN_UP);
-                reset();
               }}
               className="text-white text-sm hover:cursor-pointer"
             >
@@ -89,7 +86,6 @@ function AdditionalOptions(props: React.PropsWithChildren<any>) {
           <a
             onClick={() => {
               setFormType(FORM_TYPE.SIGN_IN);
-              reset();
             }}
             className="text-white text-sm hover:cursor-pointer"
           >
@@ -103,12 +99,11 @@ function AdditionalOptions(props: React.PropsWithChildren<any>) {
 }
 
 function Form<T extends ZodTypeAny>(props: React.PropsWithChildren<FormProps>) {
-
   const { formType, setFormType } = props;
 
   const schema: T = AuthUtils.GetSchema(formType) as T;
   type S = z.infer<typeof schema>;
-  
+
   const formHookMethods = useForm<S>({ resolver: zodResolver<T>(schema) });
 
   return (
@@ -135,7 +130,6 @@ function Form<T extends ZodTypeAny>(props: React.PropsWithChildren<FormProps>) {
 }
 
 function Auth() {
-
   const [formType, setFormType] = React.useState<FORM_TYPE>(FORM_TYPE.SIGN_IN);
 
   const title: string = AuthUtils.GetTitle(formType);
